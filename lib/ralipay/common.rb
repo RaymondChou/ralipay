@@ -34,7 +34,7 @@ module Common
     #base64编码
   end
 
-  #RSA签名
+  #MD5签名
   def self.md5_sign(for_sign_string)
 
   end
