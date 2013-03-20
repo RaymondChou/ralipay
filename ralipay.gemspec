@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Ralipay::VERSION
   spec.authors       = ["RaymondChou"]
   spec.email         = ["freezestart@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.description   = "A Gem for alipay,contains web payment and mobile payment"
+  spec.summary       = "A Gem for alipay"
+  spec.homepage      = "http://ledbk.com"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)

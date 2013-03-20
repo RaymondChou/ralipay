@@ -1,5 +1,7 @@
 require "ralipay/version"
 
 module Ralipay
-  # Your code goes here...
+
+  puts "Just test gem!"
+
 end
