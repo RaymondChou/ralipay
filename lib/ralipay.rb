@@ -1,4 +1,5 @@
 require "ralipay/version"
+require "ralipay/common"
 
 module Ralipay
 
