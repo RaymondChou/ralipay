@@ -57,4 +57,14 @@ module Common
     openssl_public.verify(digest, Base64.decode64(signed_string), for_sign_string)
   end
 
+  #除去数组中的空值和签名参数
+  def para_filter(paras = [])
+    new_paras = []
+    paras.each{|key,value|
+      unless key == 'sign' || key == 'sign_type' || value == ''
+        new_paras[key] = value
+      end
+    }
+  end
+
 end
