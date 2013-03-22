@@ -1,15 +1,15 @@
-module Common
+module Ralipay::Common
 
   require 'openssl'
 
   #生成签名结果
-  def self.build_sign(data_array, sign_type = 'RSA', rsa_private_key_path = '')
+  def self.build_sign(data_array, secure_type = 'RSA', rsa_private_key_path = '')
     #把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
     for_sign_string = self.create_link_string(data_array)
     #签名
-    if sign_type == 'RSA'
+    if secure_type == 'RSA'
       return self.rsa_sign(for_sign_string,rsa_private_key_path)
-    elsif sign_type == 'MD5'
+    elsif secure_type == 'MD5'
       return self.md5_sign(for_sign_string)
     else
       fail('Unknown sign_type!')
@@ -17,11 +17,11 @@ module Common
   end
 
   #把数组所有元素，排序后按照“参数=参数值”的模式用“&”字符拼接成字符串
-  def self.create_link_string(array)
+  def self.create_link_string(hash)
     result_string = ''
-    array = array.sort
-    array.each{|key,value|
-      result_string += (key + '=' + value + '&')
+    hash = hash.sort
+    hash.each{|key,value|
+      result_string += (key.to_s + '=' + value.to_s + '&')
     }
     #去掉末尾的&
     result_string = result_string[0, result_string.length - 1]
@@ -49,7 +49,7 @@ module Common
   end
 
   #验签
-  def verify?(for_sign_string, signed_string, rsa_public_key_path)
+  def self.verify?(for_sign_string, signed_string, rsa_public_key_path)
     #读取公钥文件
     rsa_public_key_file = File.read(rsa_public_key_path)
     openssl_public = OpenSSL::PKey::RSA.new rsa_public_key_file
@@ -58,13 +58,14 @@ module Common
   end
 
   #除去数组中的空值和签名参数
-  def para_filter(paras = [])
-    new_paras = []
+  def self.para_filter(paras = {})
+    new_paras = {}
     paras.each{|key,value|
-      unless key == 'sign' || key == 'sign_type' || value == ''
+      if key != :sign && key != :sign_type && value != '' && value != nil
         new_paras[key] = value
       end
     }
+    return new_paras
   end
 
 end

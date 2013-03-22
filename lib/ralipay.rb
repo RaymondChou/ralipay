@@ -1,15 +1,15 @@
-require 'ralipay/version'
-require 'ralipay/common'
-
-include Common
-
 module Ralipay
+
+  require 'ralipay/version'
+  require 'ralipay/common'
+
+  include Ralipay::Common
 
   class Payment
 
     #传入参数,必须初始化
     $global_configs = {
-      :sign_type     => 'RSA',
+      :secure_type   => 'RSA',
       :partner       => '',
       :seller_email  => '',
       :notify_url    => '',
@@ -35,7 +35,7 @@ module Ralipay
     end
 
     def generate_wap_pay_url
-      return $global_configs[:sign_type]
+      return $global_configs[:secure_type]
     end
 
   end

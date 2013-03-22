@@ -24,7 +24,7 @@ class Service
     sort_array = parameter_array.sort
 
     #生成签名
-    @my_sign = Common::build_sign sort_array, $global_config[:sign_type]
+    @my_sign = Common::build_sign sort_array, $global_config[:secure_type]
 
     #创建请求数据串
     @req_data = Common::create_link_string(@parameter_array + @req_data)
