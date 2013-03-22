@@ -63,4 +63,36 @@ class Service
 
   end
 
+  #创建alipay.wap.trade.create.direct接口
+  def alipay_wap_trade_create_direct parameter
+    #除去数组中的空值和签名参数
+    @@parameter = Ralipay::Common::para_filter parameter
+    @@req_data  = CGI::escape parameter[:req_data]
+    @@format    = parameter[:format]
+    sort_array  = @@parameter.sort
+    #生成签名
+    @@my_sign = Ralipay::Common::build_sign sort_array
+    #创建POST请求数据串
+    @@req_data = Ralipay::Common::create_link_string(@@parameter).to_s \
+               + '&sign='                                              \
+               + CGI::escape(@@my_sign)
+    #@@req_data = CGI::escape(@@req_data)
+
+    #请求支付宝接口
+    uri  = URI.parse (@@gateway_order)
+    http = Net::HTTP.new uri.host, uri.port
+    request  = Net::HTTP::Post.new(uri.request_uri)
+    request.set_body_internal(@@req_data)
+    response = http.request(request)
+
+    #解析token
+    token = parse_token response.body
+  end
+
+  def parse_token string
+    unsecaped_string = CGI::unescape string
+    unsecaped_string = unsecaped_string.split('&')
+    p unsecaped_string
+  end
+
 end
