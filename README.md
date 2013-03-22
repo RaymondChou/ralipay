@@ -1,6 +1,6 @@
 # Ralipay
 
-TODO: Write a gem description
+A ruby Gem for Alipay
 
 ## Installation
 
@@ -18,7 +18,8 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+还没写
+
 
 ## Contributing
 
