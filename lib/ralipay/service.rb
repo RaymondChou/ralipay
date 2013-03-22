@@ -67,7 +67,7 @@ class Service
   def alipay_wap_trade_create_direct parameter
     #除去数组中的空值和签名参数
     @@parameter = Ralipay::Common::para_filter parameter
-    @@req_data  = CGI::escape parameter[:req_data]
+    parameter[:req_data]  = CGI::escape parameter[:req_data]
     @@format    = parameter[:format]
     sort_array  = @@parameter.sort
     #生成签名

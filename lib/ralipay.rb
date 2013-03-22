@@ -75,7 +75,7 @@ module Ralipay
                     + "</out_user><merchant_url>"             \
                     + $global_configs[:merchant_url]          \
                     + "</merchant_url><cashier_code>"         \
-                    + "<call_back_url>"                       \
+                    + "</cashier_code><call_back_url>"        \
                     + $global_configs[:call_back_url]         \
                     + "</call_back_url></direct_trade_create_req>",
           :service => $service1,
