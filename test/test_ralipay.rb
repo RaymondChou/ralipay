@@ -6,8 +6,8 @@ class TestRalipay < Test::Unit::TestCase
   def test_generate_wap_pay_url
     configs = {
         :partner => '2088701817081672',
-        :rsa_private_key_path => '/Users/masonwoo/Desktop/rsa_private_key.pem',
-        :rsa_public_key_path  => '/Users/masonwoo/Desktop/alipay_public_key.pem',
+        :rsa_private_key_path => '/Users/ZhouYT/Desktop/rsa_private_key.pem',
+        :rsa_public_key_path  => '/Users/ZhouYT/Desktop/alipay_public_key.pem',
         :subject => '测试商品',
         :out_trade_no => '122222222',
         :total_fee => '1',

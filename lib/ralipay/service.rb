@@ -20,7 +20,7 @@ class Service
   end
 
   #创建mobile_merchant_pay_channel接口
-  def mobile_merchant_pay_channel(parameter)
+  def mobile_merchant_pay_channel parameter
 
     #除去数组中的空值和签名参数
     @@parameter = Ralipay::Common::para_filter parameter
