@@ -39,10 +39,7 @@ module Ralipay::Common
     digest = OpenSSL::Digest::SHA1.new
     signature = openssl_key.sign digest, for_sign_string
     #base64编码
-    signature.gsub!("\n",'')
     signature = Base64.encode64(signature)
-    #防止出现换行符(两次)
-    signature.gsub!("\n",'')
     return signature
   end
 

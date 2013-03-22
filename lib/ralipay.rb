@@ -81,7 +81,7 @@ module Ralipay
           :service => $service1,
           :sec_id  => $sec_id,
           :partner => $global_configs[:partner],
-          :req_id  => Date.new.strftime('%y%M%D%H%m%s'),
+          :req_id  => DateTime.parse(Time.now.to_s).strftime('%Y%m%d%H%M%S').to_s,
           :format  => $format,
           :v       => $v
       }
