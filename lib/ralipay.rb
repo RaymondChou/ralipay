@@ -7,13 +7,12 @@ module Ralipay
   require 'json'
   require 'date'
   require 'nokogiri'
+  require 'cgi'
 
   include Ralipay::Common
 
-  class Payment
-
-    #传入参数,必须初始化
-    $global_configs = {
+  #初始化参数
+  $global_configs = {
       :secure_type   => 'RSA',
       :partner       => '',
       :seller_email  => '',
@@ -26,17 +25,20 @@ module Ralipay
       :out_user      => '',
       :rsa_private_key_path => '',
       :rsa_public_key_path  => ''
-    }
+  }
 
-    #固定参数,无需修改
-    $service1            = 'alipay.wap.trade.create.direct'
-    $service2            = 'alipay.wap.auth.authAndExecute'
-    $format              = 'xml'
-    $sec_id              = '0001'
-    $input_charset       = 'utf-8'
-    $input_charset_gbk   = 'GBK'
-    $service_pay_channel = 'mobile.merchant.paychannel'
-    $v                   = '2.0'
+  #固定参数,无需修改
+  $service1            = 'alipay.wap.trade.create.direct'
+  $service2            = 'alipay.wap.auth.authAndExecute'
+  $format              = 'xml'
+  $sec_id              = '0001'
+  $input_charset       = 'utf-8'
+  $input_charset_gbk   = 'GBK'
+  $service_pay_channel = 'mobile.merchant.paychannel'
+  $v                   = '2.0'
+
+  #wap支付类
+  class WapPayment
 
     def initialize(configs)
       #@todo 入参合法性验证
@@ -44,7 +46,7 @@ module Ralipay
     end
 
     #生成wap支付地址
-    def generate_wap_pay_url
+    def generate_pay_url
       params = {
           :_input_charset => $input_charset_gbk,
           :sign_type      => $sec_id,
@@ -166,6 +168,75 @@ module Ralipay
       else
         false
       end
+    end
+
+  end
+
+  #手机SDK客户端支付类,与wap流程不同,且只允许RSA验签
+  class ClientPayment
+
+    def initialize(configs)
+      #@todo 入参合法性验证
+      $global_configs = $global_configs.merge configs
+    end
+
+    #异步回调验证,支付宝主动通知,前端POST xml方式获得参数,该方法只返回bool
+    #成功请自行向支付宝打印纯文本success
+    #如验签失败或未输出success支付宝会24小时根据策略重发总共7次,需考虑重复通知的情况
+    def notify_verify? posts
+      notify_data = 'notify_data=' + posts[:notify_data].to_s
+      sign        = posts[:sign]
+      #验签名
+      verify = Ralipay::Common::verify?(notify_data, sign)
+
+      if verify
+        #解密并解析返回参数的xml
+        xml    = posts[:notify_data]
+        doc    = Nokogiri::XML xml
+        status = doc.xpath('/notify/trade_status').text
+        #获得可信的交易状态
+        status == 'TRADE_FINISHED' ? true : false
+      else
+        false
+      end
+    end
+
+    #异步回调验证,支付宝主动通知,前端POST xml方式获得参数,该方法返回支付状态,并安全的返回回调参数hash,失败返回false
+    #成功请自行向支付宝打印纯文本success
+    #如验签失败或未输出success支付宝会24小时根据策略重发总共7次,需考虑重复通知的情况
+    def notify_verify posts
+      notify_data = 'notify_data=' + posts[:notify_data].to_s
+      sign        = posts[:sign]
+      #验签名
+      verify = Ralipay::Common::verify?(notify_data, sign)
+
+      if verify
+        #解密并解析返回参数的xml
+        xml    = posts[:notify_data]
+        doc    = Nokogiri::XML xml
+        status = doc.xpath('/notify/trade_status').text
+        #获得可信的交易状态
+        if status == 'TRADE_FINISHED'
+          {
+              :out_trade_no => doc.xpath('/notify/out_trade_no').text,
+              :subject      => doc.xpath('/notify/subject').text,
+              :price        => doc.xpath('/notify/price').text,
+              :trade_no     => doc.xpath('/notify/trade_no').text
+          }
+        else
+          false
+        end
+      else
+        false
+      end
+    end
+
+    #客户端callback回调之后POST请求服务器callback_url,传入hash symbol,该方法只返回bool
+    #前端在验签通过就给客户端返回2，不通过就返回1
+    def callback_verify? posts
+      sign    = CGI::unescape posts[:sign]
+      content = CGI::unescape posts[:content]
+      Ralipay::Common::verify?(content, sign)
     end
 
   end

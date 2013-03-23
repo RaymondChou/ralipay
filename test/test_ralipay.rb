@@ -17,7 +17,7 @@ class TestRalipay < Test::Unit::TestCase
         :call_back_url => 'http://www.iiseeuu.com'
     }
     assert_equal "需要手动访问url进行测试",
-                 Ralipay::Payment.new(configs).generate_wap_pay_url
+                 Ralipay::WapPayment.new(configs).generate_pay_url
   end
 
   def test_callback_verify
@@ -43,7 +43,7 @@ class TestRalipay < Test::Unit::TestCase
         :sign_type => '0001'
     }
     assert_equal true,
-                 Ralipay::Payment.new(configs).callback_verify?(gets)
+                 Ralipay::WapPayment.new(configs).callback_verify?(gets)
   end
 
   def test_notify_verify
@@ -67,7 +67,7 @@ class TestRalipay < Test::Unit::TestCase
         :notify_data => 'Ych9Cg/zaLHsqaBePwoFtxAE7vX0ZvslWCLFTP1AdsxQgvrEcwflAFdbhIHgqsy8AZdRGp7rNeP1Bpn9v+feNlHD96RQit4p1/JHTAOfdoNmQsRaDvBNH9xUlCANXC4zTFDxCZEJN79ppSAzhOu1iMAdUOzim+ZAacxpkMfM4c+YSkpXrEK7kt3Lw4FpkJwwkRAUlYNtrlva94Qo6RZDmo4UpDlUyS1GkqIOihnwxzE4rDO84txzVWtdGDD+Il5ev7nVwnbcsaJzbhl7jgkg8+KzcoIibrn8QJy/xsSckwXZ2pq9Q2d+ufOd/zqpeUvTaD9nNbaH0UYZXDzKPnS91au6zk/2Nqe1d+TsNBeU7muQTM719y7btzfq6tRjs2eNdOfinIYK/MC0lypYtakHrIxpxqyKe1UlpyIVwUauKBkzmJP03x4FJOC7jsbVxI7N2Um/7qlAYCIzLog+SvjW3RX7dhjXAG72qJ93yrTySMJE4yvHEhSFfc2EgjepMzVlCNLwlENrvzkTiqs6rdrKmReKLr2D4QETC5qPL+v3S1iEdlPN4z0KKxp1RWzdwNfLtOceas+lx8oNM2AiQ4O0Y8+YDI/NX7xjckPzwPsEfNWYnwfLYb3MkbmIfhRVozQtsVI4VfxLX35bSQLVtKPdAM4foUIZFh0+HGM+qiSNtZQ2BWjmOUFvIdNyrxMzrRF2+BnuoP+lCkOvQdOnWNoBFpD8aUQrD48AJHQTeyf63bSeJ5Vdif/LPpeJjL+FkP/k+h6mcvigIo1ZcOoF9S2Gg20EgXZWggqR7RLnkroCaNbn/86gZsDQvtwn855n3PRQxosw8a/0F5uFIt/oD5zI7TDFv+p3q9SO3+GYaOwd6OHK3hS11kx2EpzYWw9PaFoANsER9r9buKvQDfcJDkxeN79qmP2zuznVq9OM5X9wDFy2WiFfyYl/swuvZN5e9Q2c0MXj9aeA2H464Am+iFOv1lBWGOlxyVsTQuFjRzRg4FIOp8cv0qOtI/UQPWGbGAy4qys7+sJN/wkboLpdWKLhwgPzto9TM0jN5GZMeA35+2wGcuPAe/SNqhvWM9r8xeCniuSDjesHWWN5bkiYzB4cb0n+E72Yh5WmwJw87ySuXAQWgONxnzgjX0LAGiinoBoufBqmpi/f8vAV3sJFEzkGZxFLSO1Us1ldSi16IqnPTdNtaQAe0N+QYnALM10rmsuGp4/jJatFWFMnmi06AMLcC31who0SD/xItGl6riSkX0yDqWQJzCvZUrrZJoqXJ7XBZoCQscL3Ug2RCKrGba/Ekc10EQINiX99XzYUPVK8xKxO4WW/7T00rZ8B1YjnUaBdWKGdmWmv0itnLx6rK8NWBw=='
     }
     assert_equal true,
-                 Ralipay::Payment.new(configs).notify_verify?(posts)
+                 Ralipay::WapPayment.new(configs).notify_verify?(posts)
   end
 
   def test_para_filter
