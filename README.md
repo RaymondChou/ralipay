@@ -16,6 +16,41 @@ Or install it yourself as:
 
     $ gem install ralipay
 
+## API
+
+    Ralipay::WapPayment.new
+
+    Ralipay::WapPayment.generate_pay_url
+
+    Ralipay::WapPayment.callback_verify?
+
+    Ralipay::WapPayment.callback_verify
+
+    Ralipay::WapPayment.notify_verify?
+
+    Ralipay::WapPayment.notify_verify
+
+    Ralipay::ClientPayment.notify_verify?
+
+    Ralipay::ClientPayment.notify_verify
+
+    Ralipay::ClientPayment.callback_verify?
+
+    Ralipay::Common::build_sign
+
+    Ralipay::Common::create_link_string
+
+    Ralipay::Common::rsa_sign
+
+    Ralipay::Common::md5_sign
+
+    Ralipay::Common::verify?
+
+    Ralipay::Common::para_filter
+
+    Ralipay::Common::decrypt
+
+
 ## Usage
 
 ### 准备
