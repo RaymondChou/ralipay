@@ -6,6 +6,7 @@ module Ralipay
   require 'ralipay/notify'
   require 'json'
   require 'date'
+  require 'nokogiri'
 
   include Ralipay::Common
 

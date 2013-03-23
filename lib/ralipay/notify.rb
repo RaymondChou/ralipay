@@ -16,7 +16,7 @@ class Notify
     #@todo 入参合法性验证
     in_hash = Ralipay::Common::para_filter gets
     sort_hash  = in_hash.sort
-    sign = in_hash[:sign]
+    sign = CGI::unescape gets[:sign]
 
     for_sign_string = Ralipay::Common::create_link_string(sort_hash)
     Ralipay::Common::verify?(for_sign_string, sign)

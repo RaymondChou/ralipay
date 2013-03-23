@@ -45,7 +45,7 @@ module Ralipay::Common
 
   #MD5签名
   def self.md5_sign(for_sign_string)
-
+    #@todo md5签名方法
   end
 
   #验签
