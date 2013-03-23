@@ -64,11 +64,36 @@ module Ralipay::Common
   def self.para_filter paras = {}
     new_paras = {}
     paras.each{|key,value|
-      if key != :sign && key != :sign_type && value != '' && value != nil
+      if key != :sign && key != :sign_type && key != 'sign' && key != 'sign_type' && value != '' && value != nil
         new_paras[key] = value
       end
     }
     return new_paras
+  end
+
+  #解密用商户私钥,解密前，需要用base64将内容还原成二进制,按128位拆开解密
+  def self.decrypt crypt_string
+    #读取私钥文件
+    rsa_private_key_file = File.read($global_configs[:rsa_private_key_path])
+    #转换为openssl密钥
+    openssl_key = OpenSSL::PKey::RSA.new rsa_private_key_file
+    #密文经过base64解码
+    crypt_string = Base64.decode64(crypt_string)
+
+    #声明明文字符串变量
+    result = ''
+    #循环按照128位解密
+    i = 0
+    while i < (crypt_string.length.to_f/128) do
+      for_decrypt_string = crypt_string[i * 128,128]
+      #p for_decrypt_string
+      #拆分开长度为128的字符串片段通过私钥进行解密
+      origin_data = openssl_key.private_decrypt for_decrypt_string
+      result = result + origin_data
+      i += 1
+    end
+
+    return result
   end
 
 end

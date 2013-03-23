@@ -16,7 +16,7 @@ class TestRalipay < Test::Unit::TestCase
         :merchant_url => 'http://www.iiseeuu.com',
         :call_back_url => 'http://www.iiseeuu.com'
     }
-    assert_equal "test",
+    assert_equal "需要手动访问url进行测试",
                  Ralipay::Payment.new(configs).generate_wap_pay_url
   end
 

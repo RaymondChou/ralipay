@@ -55,7 +55,7 @@ class Service
     for_sign_string = for_sign_string.encode('GBK')
     verify = Ralipay::Common::verify?(for_sign_string, ali_sign)
 
-    if verify == true
+    if verify
       return json_result
     else
       fail('------verify fail------')
@@ -86,8 +86,50 @@ class Service
   end
 
   def parse_token string
-    unsecaped_string = CGI::unescape string
-    unsecaped_string = unsecaped_string.split('&')
+    #返回的数据已转义,反转义之
+    unescaped_string = CGI::unescape string
+    #用&拆开
+    unescaped_string = unescaped_string.split('&')
+    data_hash = {}
+    unescaped_string.each{|str|
+      kv_array = str.split('=',2)
+      data_hash[kv_array[0]] = kv_array[1]
+    }
+    #私钥解密
+    data_hash['res_data'] = Ralipay::Common::decrypt data_hash['res_data']
+    #获取返回的RSA签名
+    sign = data_hash['sign']
+    #去sign,准备验签
+    data_hash = Ralipay::Common::para_filter data_hash
+    data_hash.sort
+    link_string = Ralipay::Common::create_link_string(data_hash)
+
+    #验签
+    verify = Ralipay::Common::verify?(link_string, sign)
+
+    if verify
+      #解析token
+      doc = Nokogiri::XML data_hash['res_data']
+      token = doc.xpath('/direct_trade_create_res/request_token').text
+      return token
+    else
+      fail('------verify fail------')
+    end
+  end
+
+  #调用alipay_Wap_Auth_AuthAndExecute接口
+  def alipay_wap_auth_and_execute parameter
+    #除去数组中的空值和签名参数
+    @@parameter = Ralipay::Common::para_filter parameter
+    sort_array  = @@parameter.sort
+    #生成签名
+    @@my_sign = Ralipay::Common::build_sign sort_array
+    #生成跳转链接
+    redirect_url = @@gateway_order                                  \
+                 + Ralipay::Common::create_link_string(@@parameter) \
+                 + '&sign='                                          \
+                 + CGI::escape(@@my_sign)
+    return redirect_url
   end
 
 end

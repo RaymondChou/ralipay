@@ -57,6 +57,7 @@ module Ralipay
         #验签异常,可能为证书错误,参数初始化错误
         fail('------SignOrVerifyError------')
       end
+
       #参数及验签正常,继续生成请求支付请求页面url
       #构造请求参数
       req_hash = {
@@ -86,8 +87,25 @@ module Ralipay
           :v       => $v
       }
 
+      #获取token
       token = Service.new.alipay_wap_trade_create_direct(req_hash)
-      puts token
+
+      #构造要请求的参数数组，无需改动
+      req_hash = {
+          :req_data		   => "<auth_and_execute_req><request_token>" \
+                              + token                               \
+                              + "</request_token></auth_and_execute_req>",
+          :service		   => $service2,
+          :sec_id		     => $sec_id,
+          :partner		   => $global_configs[:partner],
+          :call_back_url => $global_configs[:call_back_url],
+          :format		     => $format,
+          :v				     => $v
+      }
+
+      #调用alipay_Wap_Auth_AuthAndExecute接口方法,生成支付地址
+      wap_pay_url = Service.new.alipay_wap_auth_and_execute(req_hash)
+      return wap_pay_url
     end
 
   end
