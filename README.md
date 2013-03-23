@@ -138,7 +138,9 @@ notify_verify 方法返回支付状态,并安全的返回回调参数hash,失败
 
 该方法可以不使用
 
+
 ## Contributing
+
 - 1. Fork it
 - 2. Create your feature branch (`git checkout -b my-new-feature`)
 - 3. Commit your changes (`git commit -am 'Add some feature'`)
