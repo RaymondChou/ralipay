@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-还没写
+完成度30%
 
 
 ## Contributing
