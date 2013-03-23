@@ -32,11 +32,10 @@ class Notify
         :sec_id		   => posts[:sec_id],
         :notify_data => posts[:notify_data]
     }
-
     #解密notify_data
     notify_hash[:notify_data] = Ralipay::Common::decrypt notify_hash[:notify_data]
     sign = posts[:sign]
-    for_sign_string = Ralipay::Common::create_link_string(notify_hash)
+    for_sign_string = Ralipay::Common::create_link_string(notify_hash,false)
     Ralipay::Common::verify?(for_sign_string, sign)
   end
 

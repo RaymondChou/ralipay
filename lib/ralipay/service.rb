@@ -71,7 +71,7 @@ class Service
     #生成签名
     @@my_sign = Ralipay::Common::build_sign sort_array
     #创建POST请求数据串
-    @@req_data = Ralipay::Common::create_link_string(@@parameter).to_s \
+    @@req_data = Ralipay::Common::create_link_string(sort_array).to_s \
                + '&sign='                                              \
                + CGI::escape(@@my_sign)
     #请求支付宝接口

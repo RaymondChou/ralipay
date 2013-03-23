@@ -18,9 +18,13 @@ module Ralipay::Common
   end
 
   #把数组所有元素，排序后按照“参数=参数值”的模式用“&”字符拼接成字符串
-  def self.create_link_string hash
+  def self.create_link_string hash, sort = true
     result_string = ''
-    hash = hash.sort
+    #是否排序
+    if sort
+      hash = hash.sort
+    end
+
     hash.each{|key,value|
       result_string += (key.to_s + '=' + value.to_s + '&')
     }
