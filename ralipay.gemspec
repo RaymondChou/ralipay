@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["freezestart@gmail.com"]
   spec.description   = "A Gem for alipay,contains web payment and mobile payment"
   spec.summary       = "A Gem for alipay"
-  spec.homepage      = "http://ledbk.com"
+  spec.homepage      = "http://ledbk.com/ralipay"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
