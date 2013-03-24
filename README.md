@@ -2,6 +2,8 @@
 
 A ruby Gem for Alipay, contains web payment and mobile client payment
 
+- HomePage [http://ledbk.com/ralipay/](http://ledbk.com/ralipay/)
+
 - [https://rubygems.org/gems/ralipay](https://rubygems.org/gems/ralipay)
 
 - [https://github.com/RaymondChou/ralipay](https://github.com/RaymondChou/ralipay)
