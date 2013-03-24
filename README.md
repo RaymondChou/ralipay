@@ -2,6 +2,12 @@
 
 A ruby Gem for Alipay, contains web payment and mobile client payment
 
+- [https://rubygems.org/gems/ralipay](https://rubygems.org/gems/ralipay)
+
+- [https://github.com/RaymondChou/ralipay](https://github.com/RaymondChou/ralipay)
+
+- sinatra example [https://github.com/RaymondChou/ralipay_sinatra](https://github.com/RaymondChou/ralipay_sinatra)
+
 ## Installation
 
 Add this line to your application's Gemfile:
