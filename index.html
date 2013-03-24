@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Ralipay : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Ralipay</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/RaymondChou/ralipay">View on GitHub</a>
+
+          <h1 id="project_title">Ralipay</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/RaymondChou/ralipay/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/RaymondChou/ralipay/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>Ralipay</h1>
+
+<p>A ruby Gem for Alipay, contains web payment and mobile client payment</p>
+
+<ul>
+<li><p><a href="https://rubygems.org/gems/ralipay">https://rubygems.org/gems/ralipay</a></p></li>
+<li><p><a href="https://github.com/RaymondChou/ralipay">https://github.com/RaymondChou/ralipay</a></p></li>
+<li><p>sinatra example <a href="https://github.com/RaymondChou/ralipay_sinatra">https://github.com/RaymondChou/ralipay_sinatra</a></p></li>
+</ul><h2>Installation</h2>
+
+<p>Add this line to your application's Gemfile:</p>
+
+<pre><code>gem 'ralipay'
+</code></pre>
+
+<p>And then execute:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Or install it yourself as:</p>
+
+<pre><code>$ gem install ralipay
+</code></pre>
+
+<h2>API</h2>
+
+<pre><code>Ralipay::WapPayment.new
+
+Ralipay::WapPayment.generate_pay_url
+
+Ralipay::WapPayment.callback_verify?
+
+Ralipay::WapPayment.callback_verify
+
+Ralipay::WapPayment.notify_verify?
+
+Ralipay::WapPayment.notify_verify
+
+Ralipay::ClientPayment.notify_verify?
+
+Ralipay::ClientPayment.notify_verify
+
+Ralipay::ClientPayment.callback_verify?
+
+Ralipay::Common::build_sign
+
+Ralipay::Common::create_link_string
+
+Ralipay::Common::rsa_sign
+
+Ralipay::Common::md5_sign
+
+Ralipay::Common::verify?
+
+Ralipay::Common::para_filter
+
+Ralipay::Common::decrypt
+</code></pre>
+
+<h2>Usage</h2>
+
+<h3>准备</h3>
+
+<ul>
+<li><p>申请你的支付宝商户服务</p></li>
+<li><p>取调用支付宝支付接口的账户信息</p></li>
+<li><p>并使用openssl工具生成好公钥与私钥(建议使用RSA加密方式)</p></li>
+</ul><h3>生成一个商品的WAP支付地址</h3>
+
+<p>准备好参数:configs(hash symbol)</p>
+
+<pre><code>configs = {
+        :partner =&gt; '0000000000000',  #商户id partner_id
+        :seller_email =&gt; 'service@iiseeuu.com',  #商户email
+        :rsa_private_key_path =&gt; '/Users/ZhouYT/Desktop/rsa_private_key.pem',  #私钥绝对路径
+        :rsa_public_key_path  =&gt; '/Users/ZhouYT/Desktop/alipay_public_key.pem',  #公钥绝对路径
+        :subject =&gt; '测试商品',  #商品名称
+        :out_trade_no =&gt; '1222222233',  #外部交易号,不能重复
+        :total_fee =&gt; '0.01',  #交易价格
+        :notify_url =&gt; 'http://xx.xx.xx.xx/xx/xx',  #服务器异步回调通知接口地址
+        :merchant_url =&gt; 'http://xx.xx.xx.xx/xx/xx',  #商品展示地址
+        :call_back_url =&gt; 'http://xx.xx.xx.xx/xx/xx'  #支付成功同步回调跳转地址
+    }
+</code></pre>
+
+<p>获取url</p>
+
+<pre><code>url = Ralipay::WapPayment.new(configs).generate_pay_url
+</code></pre>
+
+<p>将当前页面redirect到该url上</p>
+
+<h3>wap支付同步回调页面callback_url(get方法)</h3>
+
+<p>同样需要上面的configs(hash symbol),在new的时候只需要配置公钥和私钥就可以了</p>
+
+<p>准备好当前页面获取到的get请求获取到的所有参数与值,用hash symbol形式传入</p>
+
+<pre><code>Ralipay::WapPayment.new(configs).callback_verify?(gets)
+</code></pre>
+
+<p>callback_verify? 方法只返回bool</p>
+
+<p>callback_verify 方法返回支付状态,并安全的返回回调参数hash,失败返回false</p>
+
+<p>返回的hash内容:</p>
+
+<pre><code>:trade_no
+:out_trade_no
+</code></pre>
+
+<h3>wap支付异步回调接口notify_url(post方法)</h3>
+
+<p>同样需要上面的configs(hash symbol),在new的时候只需要配置公钥和私钥就可以了</p>
+
+<p>准备好当前页面获取到的post请求获取到的所有参数与值,用hash symbol形式传入</p>
+
+<pre><code>Ralipay::WapPayment.new(configs).notify_verify?(posts)
+</code></pre>
+
+<p>异步回调验证,支付宝主动通知,前端POST xml方式获得参数,该方法只返回bool</p>
+
+<p>成功请自行向支付宝打印纯文本success</p>
+
+<p>如验签失败或未输出success支付宝会24小时根据策略重发总共7次,需考虑重复通知的情况</p>
+
+<p>notify_verify? 方法只返回bool</p>
+
+<p>notify_verify 方法返回支付状态,并安全的返回回调参数hash,失败返回false</p>
+
+<h3>客户端sdk支付异步回调通知接口notify_url(post方法)</h3>
+
+<p>同样需要上面的configs(hash symbol),在new的时候只需要配置公钥和私钥就可以了</p>
+
+<p>准备好当前页面获取到的post请求获取到的所有参数与值,用hash symbol形式传入</p>
+
+<pre><code>Ralipay::ClientPayment.new(configs).notify_verify?(posts)
+</code></pre>
+
+<p>此方法与wap支付一致,内部处理有所不同</p>
+
+<h3>客户端sdk支付同步验证callback_url(post方法)</h3>
+
+<p>客户端callback回调之后POST请求服务器callback_url</p>
+
+<p>前端处理时在验签通过就给客户端返回2，不通过就返回1</p>
+
+<pre><code>Ralipay::ClientPayment.new(configs).callback_verify?(posts)
+</code></pre>
+
+<p>该方法可以不使用</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Ralipay maintained by <a href="https://github.com/RaymondChou">RaymondChou</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
