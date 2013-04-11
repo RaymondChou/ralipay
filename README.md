@@ -2,6 +2,8 @@
 
 [![Gem Version](https://badge.fury.io/rb/ralipay.png)](http://badge.fury.io/rb/ralipay)
 
+[![Build Status](https://travis-ci.org/RaymondChou/ralipay.png?branch=master)](https://travis-ci.org/RaymondChou/ralipay)
+
 A ruby Gem for Alipay, contains web payment and mobile client payment
 
 - HomePage [http://ledbk.com/ralipay/](http://ledbk.com/ralipay/)
