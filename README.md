@@ -1,5 +1,9 @@
 # Ralipay
 
+[![Gem Version](https://badge.fury.io/rb/ralipay.png)](http://badge.fury.io/rb/ralipay)
+
+{<img src="https://badge.fury.io/rb/ralipay.png" alt="Gem Version" />}[http://badge.fury.io/rb/ralipay]
+
 A ruby Gem for Alipay, contains web payment and mobile client payment
 
 - HomePage [http://ledbk.com/ralipay/](http://ledbk.com/ralipay/)
