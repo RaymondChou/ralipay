@@ -83,4 +83,20 @@ class TestRalipay < Test::Unit::TestCase
                  Ralipay::Common::create_link_string(input_para)
   end
 
+  def test_web_pay_url
+      configs = {
+          :partner => '2088701817081672',
+          :seller_email => 'service@iiseeuu.com',
+          :subject => '测试商品',
+          :out_trade_no => 'tt44',
+          :total_fee => '0.01',
+          :notify_url => 'http://180.110.74.118/post.php',
+          :merchant_url => 'http://www.iiseeuu.com',
+          :call_back_url => 'http://www.iiseeuu.com',
+      }
+      gets = 'service=create_direct_pay_by_user&_input_charset=utf-8&payment_type=1&partner=2088701817081672&seller_email=service@iiseeuu.com&subject=%E6%B5%8B%E8%AF%95%E5%95%86%E5%93%81&out_trade_no=tt44&total_fee=0.01&show_url=http://www.iiseeuu.com&return_url=http://www.iiseeuu.com&notify_url=http://180.110.74.118/post.php&sign_type=MD5&sign=9b8bf3d329ed38d461d0bb72654c11e4'
+    assert_equal 'a=abc&d=&s=&x=abcd',
+                 Ralipay::WebPayment.new(configs).callback_verify?(gets)
+  end
+
 end

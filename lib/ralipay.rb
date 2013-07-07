@@ -8,6 +8,8 @@ module Ralipay
   require 'date'
   require 'nokogiri'
   require 'cgi'
+  require 'uri'
+  require 'digest/md5'
 
   include Ralipay::Common
 
@@ -24,7 +26,8 @@ module Ralipay
       :total_fee     => '',
       :out_user      => '',
       :rsa_private_key_path => '',
-      :rsa_public_key_path  => ''
+      :rsa_public_key_path  => '',
+      :key           => ''
   }
 
   #固定参数,无需修改
@@ -237,6 +240,86 @@ module Ralipay
       sign    = CGI::unescape posts[:sign]
       content = CGI::unescape posts[:content]
       Ralipay::Common::verify?(content, sign)
+    end
+
+  end
+
+  class WebPayment
+
+    def initialize(configs)
+      #@todo 入参合法性验证
+      $global_configs = $global_configs.merge configs
+    end
+
+    def sign(params)
+      params_kv = params.sort.map do |kv|
+        kv.join('=')
+      end
+      sign = Digest::MD5.hexdigest(params_kv.join('&') + $global_configs[:key])
+      params['sign_type'] = 'MD5'
+      params['sign'] = sign
+      params
+    end
+
+    #生成web支付地址
+    def generate_pay_url
+      params = Hash.new
+      params['service']        = 'create_direct_pay_by_user'
+      params['_input_charset'] = 'utf-8'
+      params['payment_type']   = '1'
+      params['partner']        = $global_configs[:partner]
+      params['seller_email']   = $global_configs[:seller_email]
+      params['subject']        = $global_configs[:subject]
+      params['out_trade_no']   = $global_configs[:out_trade_no]
+      params['total_fee']      = $global_configs[:total_fee]
+      params['show_url']       = $global_configs[:merchant_url]
+      params['return_url']     = $global_configs[:call_back_url]
+      params['notify_url']     = $global_configs[:notify_url]
+      all_params = sign(params)
+      all_params_kv = all_params.map do |key,value|
+        key + '=' + value
+      end
+      'https://www.alipay.com/cooperate/gateway.do?' + URI.encode(all_params_kv.join('&'))
+    end
+
+    #同步回调验证,支付后跳转,前端GET方式获得参数,传入hash symbol,该方法只返回bool
+    def callback_verify? gets
+      gets.split('&').inject({}) do |memo, chunk|
+        next if chunk.empty?
+        key, value = chunk.split('=', 2)
+        next if key.empty?
+        value = value.nil? ? nil : CGI.unescape(value)
+        memo[CGI.unescape(key)] = value
+      end
+      sign_type = memo.delete('sign_type')
+      sign = memo.delete('sign')
+      md5_string = memo.sort.collect do |s|
+        if s[0] != 'notify_id'
+          s[0] + '=' + CGI.unescape(s[1])
+        else
+          s[0] + '=' + s[1]
+        end
+      end
+      Digest::MD5.hexdigest(md5_string.join("&") + $global_configs[:key]) == sign.downcase
+    end
+
+    #同步回调验证,支付后跳转,前端GET方式获得参数,传入hash symbol,该方法返回支付状态,并安全的返回回调参数hash,失败返回false
+    def callback_verify gets
+
+    end
+
+    #异步回调验证,支付宝主动通知,前端POST xml方式获得参数,该方法只返回bool
+    #成功请自行向支付宝打印纯文本success
+    #如验签失败或未输出success支付宝会24小时根据策略重发总共7次,需考虑重复通知的情况
+    def notify_verify? posts
+
+    end
+
+    #异步回调验证,支付宝主动通知,前端POST xml方式获得参数,该方法返回支付状态,并安全的返回回调参数hash,失败返回false
+    #成功请自行向支付宝打印纯文本success
+    #如验签失败或未输出success支付宝会24小时根据策略重发总共7次,需考虑重复通知的情况
+    def notify_verify posts
+
     end
 
   end
