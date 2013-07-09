@@ -284,23 +284,12 @@ module Ralipay
 
     #同步回调验证,支付后跳转,前端GET方式获得参数,传入hash symbol,该方法只返回bool
     def callback_verify? gets
-      gets.split('&').inject({}) do |memo, chunk|
-        next if chunk.empty?
-        key, value = chunk.split('=', 2)
-        next if key.empty?
-        value = value.nil? ? nil : CGI.unescape(value)
-        memo[CGI.unescape(key)] = value
+      sign_type = gets.delete('sign_type')
+      sign = gets.delete('sign')
+      params_kv = gets.sort.map do |kv|
+        kv.join('=')
       end
-      sign_type = memo.delete('sign_type')
-      sign = memo.delete('sign')
-      md5_string = memo.sort.collect do |s|
-        if s[0] != 'notify_id'
-          s[0] + '=' + CGI.unescape(s[1])
-        else
-          s[0] + '=' + s[1]
-        end
-      end
-      Digest::MD5.hexdigest(md5_string.join("&") + $global_configs[:key]) == sign.downcase
+      sign == Digest::MD5.hexdigest(params_kv.join('&') + $global_configs[:key])
     end
 
     #同步回调验证,支付后跳转,前端GET方式获得参数,传入hash symbol,该方法返回支付状态,并安全的返回回调参数hash,失败返回false
