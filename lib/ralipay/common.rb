@@ -2,6 +2,7 @@ module Ralipay::Common
 
   require 'openssl'
   require 'base64'
+  require 'digest/md5'
 
   #生成签名结果
   def self.build_sign data_array
@@ -49,7 +50,7 @@ module Ralipay::Common
 
   #MD5签名
   def self.md5_sign(for_sign_string)
-    #@todo md5签名方法
+    Digest::MD5.hexdigest for_sign_string
   end
 
   #验签

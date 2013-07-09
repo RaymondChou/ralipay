@@ -9,7 +9,7 @@ module Ralipay
   require 'nokogiri'
   require 'cgi'
   require 'uri'
-  require 'digest/md5'
+  require 'open-uri'
 
   include Ralipay::Common
 
@@ -284,31 +284,63 @@ module Ralipay
 
     #同步回调验证,支付后跳转,前端GET方式获得参数,传入hash symbol,该方法只返回bool
     def callback_verify? gets
-      sign_type = gets.delete('sign_type')
-      sign = gets.delete('sign')
-      params_kv = gets.sort.map do |kv|
-        kv.join('=')
-      end
-      sign == Digest::MD5.hexdigest(params_kv.join('&') + $global_configs[:key])
+      sign = gets[:sign]
+      gets = Ralipay::Common::para_filter(gets)
+      for_sign = Ralipay::Common::create_link_string(gets)
+      for_sign = CGI.unescape for_sign
+      sign == Ralipay::Common::md5_sign(for_sign + $global_configs[:key])
     end
 
     #同步回调验证,支付后跳转,前端GET方式获得参数,传入hash symbol,该方法返回支付状态,并安全的返回回调参数hash,失败返回false
     def callback_verify gets
-
+      origin_params = gets
+      sign = gets[:sign]
+      gets = Ralipay::Common::para_filter(gets)
+      for_sign = Ralipay::Common::create_link_string(gets)
+      for_sign = CGI.unescape for_sign
+      if sign == Ralipay::Common::md5_sign(for_sign + $global_configs[:key])
+        origin_params
+      else
+        false
+      end
     end
 
     #异步回调验证,支付宝主动通知,前端POST xml方式获得参数,该方法只返回bool
     #成功请自行向支付宝打印纯文本success
     #如验签失败或未输出success支付宝会24小时根据策略重发总共7次,需考虑重复通知的情况
     def notify_verify? posts
-
+      origin_params = posts
+      sign = posts[:sign]
+      posts = Ralipay::Common::para_filter(posts)
+      for_sign = Ralipay::Common::create_link_string(posts)
+      for_sign = CGI.unescape for_sign
+      if sign == Ralipay::Common::md5_sign(for_sign + $global_configs[:key])
+        response = open('http://notify.alipay.com/trade/notify_query.do?' + 'partner=' + $global_configs[:partner] + '&notify_id=' + origin_params[:notify_id]).read
+        response == 'true'
+      else
+        false
+      end
     end
 
     #异步回调验证,支付宝主动通知,前端POST xml方式获得参数,该方法返回支付状态,并安全的返回回调参数hash,失败返回false
     #成功请自行向支付宝打印纯文本success
     #如验签失败或未输出success支付宝会24小时根据策略重发总共7次,需考虑重复通知的情况
     def notify_verify posts
-
+      origin_params = posts
+      sign = posts[:sign]
+      posts = Ralipay::Common::para_filter(posts)
+      for_sign = Ralipay::Common::create_link_string(posts)
+      for_sign = CGI.unescape for_sign
+      if sign == Ralipay::Common::md5_sign(for_sign + $global_configs[:key])
+        response = open('http://notify.alipay.com/trade/notify_query.do?' + 'partner=' + $global_configs[:partner] + '&notify_id=' + origin_params[:notify_id]).read
+        if response == 'true'
+          origin_params
+        else
+          false
+        end
+      else
+        false
+      end
     end
 
   end
