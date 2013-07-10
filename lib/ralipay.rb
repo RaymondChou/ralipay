@@ -287,7 +287,7 @@ module Ralipay
       sign = gets[:sign]
       gets = Ralipay::Common::para_filter(gets)
       for_sign = Ralipay::Common::create_link_string(gets)
-      for_sign = CGI.unescape for_sign
+      #for_sign = CGI.unescape for_sign
       sign == Ralipay::Common::md5_sign(for_sign + $global_configs[:key])
     end
 
@@ -297,7 +297,7 @@ module Ralipay
       sign = gets[:sign]
       gets = Ralipay::Common::para_filter(gets)
       for_sign = Ralipay::Common::create_link_string(gets)
-      for_sign = CGI.unescape for_sign
+      #for_sign = CGI.unescape for_sign
       if sign == Ralipay::Common::md5_sign(for_sign + $global_configs[:key])
         origin_params
       else
@@ -313,7 +313,7 @@ module Ralipay
       sign = posts[:sign]
       posts = Ralipay::Common::para_filter(posts)
       for_sign = Ralipay::Common::create_link_string(posts)
-      for_sign = CGI.unescape for_sign
+      #for_sign = CGI.unescape for_sign
       if sign == Ralipay::Common::md5_sign(for_sign + $global_configs[:key])
         response = open('http://notify.alipay.com/trade/notify_query.do?' + 'partner=' + $global_configs[:partner] + '&notify_id=' + origin_params[:notify_id]).read
         response == 'true'
@@ -330,7 +330,7 @@ module Ralipay
       sign = posts[:sign]
       posts = Ralipay::Common::para_filter(posts)
       for_sign = Ralipay::Common::create_link_string(posts)
-      for_sign = CGI.unescape for_sign
+      #for_sign = CGI.unescape for_sign
       if sign == Ralipay::Common::md5_sign(for_sign + $global_configs[:key])
         response = open('http://notify.alipay.com/trade/notify_query.do?' + 'partner=' + $global_configs[:partner] + '&notify_id=' + origin_params[:notify_id]).read
         if response == 'true'
