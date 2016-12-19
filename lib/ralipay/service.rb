@@ -10,9 +10,9 @@ class Service
 
   @@gateway_pay_channel = 'https://mapi.alipay.com/cooperate/gateway.do?'
   @@gateway_order       = 'http://wappaygw.alipay.com/service/rest.htm?'
-  @@my_sign          #签名结果
-  @@parameter        #需要签名的hash
-  @@format           #编码格式
+  @@my_sign = nil          #签名结果
+  @@parameter = nil       #需要签名的hash
+  @@format = nil          #编码格式
   @@req_data = ''    #post请求数据
 
   def initialize
